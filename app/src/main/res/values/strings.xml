@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">AiDiary</string>
+    <string name="new_diary">创建新日记</string>
+    <string name="report">最近30日报表</string>
+    <string name="button_back">&lt;返回</string>
+    <string name="button_edit">编辑</string>
+    <string name="button_save">保存</string>
+    <string name="default_name"></string>
+    <string name="button_new_hoto">上传新照片</string>
+    <string name="title_chart">图表展示</string>
+</resources>

@@ -1,0 +1,12 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="actionbar_height">45dp</dimen>
+    <dimen name="diary_item_height">80dp</dimen>
+    <dimen name="general_padding">6dp</dimen>
+    <dimen name="large_padding">12dp</dimen>
+    <dimen name="emotion_block_size">15dp</dimen>
+    <dimen name="image_selector_height">200dp</dimen>
+    <dimen name="title_font_size">23sp</dimen>
+    <dimen name="head_button_font_size">20sp</dimen>
+    <dimen name="context_font_size">20sp</dimen>
+</resources>

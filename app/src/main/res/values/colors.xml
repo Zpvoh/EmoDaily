@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#02ccff</color>
+    <color name="colorPrimaryStatusBar">#02ccff</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorBackground">#ffffff</color>
+    <color name="goodEmotion">#25f129</color>
+    <color name="midEmotion">#fcaf08</color>
+    <color name="badEmotion">#ed2727</color>
+    <color name="colorPrimary2">#4fd44a</color>
+    <color name="colorPrimary3">#ff8c00</color>
+    <color name="colorPrimary4">#1d47a2</color>
+</resources>

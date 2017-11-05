@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/actionbar_height"
+            android:orientation="horizontal"
+            android:background="@color/colorPrimary3">
+
+            <Button
+                android:id="@+id/button_back"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/button_back"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/head_button_font_size" />
+
+            <EditText
+                android:id="@+id/editText_Title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="@string/default_name"
+                android:textAlignment="center"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/button_save"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/button_save"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/head_button_font_size" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/button_upload"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_new_hoto"
+            android:textSize="@dimen/head_button_font_size" />
+
+        <TextView
+            android:id="@+id/photo_path"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:visibility="invisible" />
+
+        <EditText
+            android:id="@+id/editText_Context"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:ems="10"
+            android:inputType="textMultiLine"
+            android:selectAllOnFocus="false"
+            android:text="@string/default_name"
+            android:gravity="top"/>
+
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>
