@@ -37,7 +37,7 @@ public class DiaryListAdapter extends BaseAdapter {
         TextView dateView = (TextView)view.findViewById(R.id.textView_date);
         ImageView emotionIndicator = (ImageView)view.findViewById(R.id.emotion_indicator);
         titleView.setText(((Diary)this.getItem(i)).title);
-        dateView.setText(df.format(((Diary)this.getItem(i)).postTime));
+        dateView.setText(((Diary)this.getItem(i)).postTime);
         float e = ((Diary)this.getItem(i)).emotion;
         if(e >=0 && e <= 0.3){
             emotionIndicator.setBackgroundColor(view.getResources().getColor(R.color.goodEmotion));

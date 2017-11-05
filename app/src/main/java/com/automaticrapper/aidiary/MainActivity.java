@@ -19,29 +19,39 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class MainActivity extends AppCompatActivity {
-    private Diary[] diaryItems = {new Diary("日记1","日记1的内容",0.1f),
-                                    new Diary("日记2","日记2的内容",0.2f),
-                                    new Diary("日记3","日记3的内容",0.3f),
-                                    new Diary("日记4","日记4的内容",0.4f),
-                                    new Diary("日记5","日记5的内容",0.5f),
-                                    new Diary("日记6","日记6的内容",0.6f),
-                                    new Diary("日记7","日记7的内容",0.7f),
-                                    new Diary("日记8","日记8的内容",0.8f)};
+    private ArrayList<Diary> diaryItems;
+    ArrayList<Float> emotions;
+    private String trim(String str){
+//        Pattern p = Pattern.compile("\\s*|\t|\r|\n|\\|");
+//        Matcher m = p.matcher(str);
+//        String dest = m.replaceAll("");
+  //      str = str.replace('\\','');
 
+        return "";
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        emotions = new ArrayList<Float>();
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
+
+
+
+
+        diaryItems = new ArrayList<Diary>();
 
         ProgressDialog progressDialog =  new ProgressDialog(this);
         progressDialog.setMessage("加载日记中...");
@@ -57,8 +67,27 @@ public class MainActivity extends AppCompatActivity {
         }
 
         String str = HttpRequestUtils.getRequest("http://120.78.173.81/demo/hack/php/home.php");
+        String[] temp = str.substring(2,str.length()-2).split("[}][,][{]");
         try{
-            JSONObject jsonObject = HttpRequestUtils.stringToJSON(str);
+            for (int i=0;i<temp.length;i++){
+                temp[i] = "{"+temp[i]+"}";
+                JSONObject jsonObject = HttpRequestUtils.stringToJSON(temp[i]);
+                Diary item = new Diary(jsonObject.getString("title"),jsonObject.getString("content"),(float)jsonObject.getDouble("emotion"));
+                item.imageUri = jsonObject.getString("src");
+                item.postTime = jsonObject.getString("date");
+                emotions.add((float)jsonObject.getDouble("emotion"));
+                diaryItems.add(item);
+//                while(iterator.hasNext()){
+//                    String key = (String) iterator.next();
+//                    JSONObject object = jsonObject.getJSONObject(key);
+//                    Diary newItem = new Diary(object.getString("title"),object.getString("content"),(float)object.getDouble("emotion"));
+//                    newItem.imageUri = object.getString("src");
+//                    newItem.postTime = new Date(object.getString("date"));
+//                    diaryItems.add(newItem);
+//                }
+            }
+
+
 
         }catch (JSONException e){
             System.out.println(e);
@@ -66,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
 
         progressDialog.dismiss();
 
-        diaryItems[0].imageUri = "http://img4.imgtn.bdimg.com/it/u=2192668381,2116711447&fm=200&gp=0.jpg";
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setElevation(0);
@@ -82,8 +110,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Diary arr[] = new Diary[diaryItems.size()];
         ListView lv = (ListView)findViewById(R.id.main_listview);
-        DiaryListAdapter adapter = new DiaryListAdapter(this,diaryItems);
+        diaryItems.toArray(arr);
+        DiaryListAdapter adapter = new DiaryListAdapter(this,arr);
         lv.setAdapter(adapter);
 
         lv.setOnItemClickListener(new ListView.OnItemClickListener(){
@@ -119,18 +149,14 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }else if(id == R.id.menu_report){
             Intent intent = new Intent(MainActivity.this,ChartActivity.class);
-            ArrayList<Float> emotions = new ArrayList<Float>();
 
             ProgressDialog progressDialog =  new ProgressDialog(this);
             progressDialog.setMessage("加载图表数据中...");
             progressDialog.setCancelable(false);
             progressDialog.show();
 
-            emotions.add(0.0f);
-            emotions.add(0.1f);
-            emotions.add(0.3f);
-            emotions.add(0.2f);
-            emotions.add(0.5f);
+
+
 
             progressDialog.dismiss();
 

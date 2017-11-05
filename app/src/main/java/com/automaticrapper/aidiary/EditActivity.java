@@ -1,76 +1,1 @@
-package com.automaticrapper.aidiary;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Intent;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.annotation.Nullable;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-
-
-public class EditActivity extends Activity {
-    private Diary diary = null;
-    private TextView photoPath;
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit);
-
-        String str=null;
-        Intent intent = getIntent();
-        String status = intent.getStringExtra("status");
-        if (status.equals("edit")) {
-            diary = (Diary) intent.getSerializableExtra("diary_data");
-            if (diary != null) {
-                EditText editTitle = (EditText) findViewById(R.id.editText_Title);
-                EditText editContext = (EditText) findViewById(R.id.editText_Context);
-                editTitle.setText(diary.title);
-                editContext.setText(diary.context);
-            } else {
-                new AlertDialog.Builder(this).setTitle("错误").setMessage("读取日记失败！").setPositiveButton("返回", null).show();
-                this.finish();
-            }
-        }
-
-        photoPath = (TextView)findViewById(R.id.photo_path);
-        Button btnBack = (Button) findViewById(R.id.button_back);
-        Button btnSave = (Button) findViewById(R.id.button_save);
-        Button btnUpload = (Button) findViewById(R.id.button_upload);
-
-        btnBack.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EditActivity.this.finish();
-            }
-        });
-
-        btnSave.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //保存日记的代码写在这里
-            }
-        });
-
-        btnUpload.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/*");
-                intent.putExtra("return-data", true);
-                startActivityForResult(intent, 1);
-            }
-        });
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == 1 && resultCode == RESULT_OK){
-            photoPath.setText(data.getDataString());
-            photoPath.setVisibility(View.VISIBLE);
-        }
-    }
-}
+package com.automaticrapper.aidiary;import android.Manifest;import android.app.Activity;import android.app.AlertDialog;import android.content.Intent;import android.content.pm.PackageManager;import android.os.Bundle;import android.provider.MediaStore;import android.support.annotation.Nullable;import android.support.v4.app.ActivityCompat;import android.support.v4.content.ContextCompat;import android.view.View;import android.widget.Button;import android.widget.EditText;import android.widget.TextView;import com.microsoft.cognitiveservices.speechrecognition.ISpeechRecognitionServerEvents;import com.microsoft.cognitiveservices.speechrecognition.MicrophoneRecognitionClient;import com.microsoft.cognitiveservices.speechrecognition.RecognitionResult;import com.microsoft.cognitiveservices.speechrecognition.SpeechRecognitionMode;import com.microsoft.cognitiveservices.speechrecognition.SpeechRecognitionServiceFactory;import org.json.JSONObject;import java.util.Date;public class EditActivity extends Activity {    private Diary diary = null;    private Date date=null;    private TextView photoPath;    @Override    protected void onCreate(@Nullable Bundle savedInstanceState) {        super.onCreate(savedInstanceState);        setContentView(R.layout.activity_edit);        final MicrophoneRecognitionClient micClient=initializeRecoClient();        String str=null;        final Intent intent = getIntent();        String status = intent.getStringExtra("status");        if (status.equals("edit")) {            diary = (Diary) intent.getSerializableExtra("diary_data");            if (diary != null) {                EditText editTitle = (EditText) findViewById(R.id.editText_Title);                EditText editContext = (EditText) findViewById(R.id.editText_Context);                editTitle.setText(diary.title);                editContext.setText(diary.context);            } else {                new AlertDialog.Builder(this).setTitle("错误").setMessage("读取日记失败！").setPositiveButton("返回", null).show();                this.finish();            }        }        photoPath = (TextView)findViewById(R.id.photo_path);        Button btnBack = (Button) findViewById(R.id.button_back);        Button btnSave = (Button) findViewById(R.id.button_save);        Button btnUpload = (Button) findViewById(R.id.button_upload);        final Button btnSpeech=(Button) findViewById(R.id.speech);        btnBack.setOnClickListener(new Button.OnClickListener() {            @Override            public void onClick(View view) {                EditActivity.this.finish();            }        });        btnSave.setOnClickListener(new Button.OnClickListener() {            @Override            public void onClick(View view) {                try {                    diary = (Diary) intent.getSerializableExtra("diary_data");                    EditText editTitle = (EditText) findViewById(R.id.editText_Title);                    EditText editContext = (EditText) findViewById(R.id.editText_Context);                    String emotion = GetSentiment.sendSentiment(editContext.getText().toString());                    String tags = GetKeyPhrases.getKetPhase(editContext.getText().toString());                    //代码写在这里                    String str = "{'title':'" + editTitle.getText() + "'," +                            "'date':'" + diary.postTime + "'," +                            "'content':'" + editContext.getText() + "'," +                            "'emotion':'" + emotion + "'," +                            "'label':'" + tags + "'}";                    JSONObject json = HttpRequestUtils.stringToJSON(str);                    HttpRequestUtils.requestPost("http://120.78.173.81/demo/hack/php/modify.php", json);                }catch (Exception e){                    e.printStackTrace();                }            }        });        btnSpeech.setOnClickListener(new View.OnClickListener() {            @Override            public void onClick(View view) {                if(btnSpeech.getText().equals("语音识别开始")){                    micClient.startMicAndRecognition();                    btnSpeech.setText("语音识别结束");                }else{                    micClient.endMicAndRecognition();                    btnSpeech.setText("语音识别开始");                }            }        });        btnUpload.setOnClickListener(new Button.OnClickListener() {            @Override            public void onClick(View view) {                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);                intent.setType("image/*");                intent.putExtra("return-data", true);                startActivityForResult(intent, 1);            }        });    }    protected void onActivityResult(int requestCode, int resultCode, Intent data) {        if(requestCode == 1 && resultCode == RESULT_OK){            photoPath.setText(data.getDataString());            photoPath.setVisibility(View.VISIBLE);        }    }    public MicrophoneRecognitionClient initializeRecoClient()    {        String language = "en-us";        String subscriptionKey = this.getString(R.string.subscription_key);        String luisAppID = this.getString(R.string.luisAppID);        String luisSubscriptionID = this.getString(R.string.luisSubscriptionID);        MicrophoneRecognitionClient micClient=null;        ActivityCompat.requestPermissions(this,                new String[]{Manifest.permission.RECORD_AUDIO},                0);        if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)!= PackageManager.PERMISSION_DENIED) {            micClient = SpeechRecognitionServiceFactory.createMicrophoneClient(this, SpeechRecognitionMode.ShortPhrase, "zh-cn", new ISpeechRecognitionServerEvents() {                @Override                public void onPartialResponseReceived(String s) {                }                @Override                public void onFinalResponseReceived(RecognitionResult recognitionResult) {                    EditText editContext = (EditText) findViewById(R.id.editText_Context);                    editContext.setText(editContext.getText()+recognitionResult.Results[0].DisplayText);                }                @Override                public void onIntentReceived(String s) {                }                @Override                public void onError(int i, String s) {                    System.out.println("error");                }                @Override                public void onAudioEvent(boolean b) {                    System.out.println("change");                }            }, "4ad3299dcfab4049a65cd1dd85ea9627");            micClient.setAuthenticationUri("https://api.cognitive.microsoft.com/sts/v1.0/issuetoken");        }        return micClient;    }}

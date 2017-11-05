@@ -45,9 +45,10 @@ public class HttpRequestUtils {
         }
         return result;
     }
-    public static void requestPost(String baseUrl, JSONObject json) throws JSONException{
+    public static String requestPost(String baseUrl, JSONObject json) throws JSONException{
         HashMap<String, String> paramsMap = new HashMap<>();
         Iterator iterator = json.keys();
+        String result=null;
         while (iterator.hasNext()){
             String key = (String) iterator.next();
             String value = json.getString(key);
@@ -97,7 +98,7 @@ public class HttpRequestUtils {
             // 判断请求是否成功
             if (urlConn.getResponseCode() == 200) {
                 // 获取返回的数据
-                String result = streamToString(urlConn.getInputStream());
+                result = streamToString(urlConn.getInputStream());
                 Log.e("Error", "Post方式请求成功，result--->" + result);
             } else {
                 Log.e("Error", "Post方式请求失败");
@@ -107,6 +108,8 @@ public class HttpRequestUtils {
         } catch (Exception e) {
             Log.e("Success", e.toString());
         }
+
+        return result;
     }
     public static String streamToString(InputStream is) {
         try {

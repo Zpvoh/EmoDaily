@@ -8,7 +8,7 @@ public class Diary implements Serializable
 {
     public String title;
     public String context;
-    public Date postTime;
+    public String postTime;
     public float emotion;
     public ArrayList<String> tags;
     public String imageUri;
@@ -18,6 +18,6 @@ public class Diary implements Serializable
         this.context = context;
         this.emotion = emotion;
         this.imageUri = "";
-        postTime = new Date();
+        postTime = new String();
     }
 }

@@ -16,6 +16,9 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
@@ -47,12 +50,12 @@ public class PreviewActivity extends Activity {
             };
         };
 
-
         Intent intent = this.getIntent();
         diary = (Diary)intent.getSerializableExtra("diary_data");
         if(diary != null){
             TextView title = (TextView)findViewById(R.id.textView_Title);
             TextView context = (TextView)findViewById(R.id.textView_Content);
+            TextView tags=(TextView)findViewById(R.id.tags);
             imgView = (ImageView)findViewById(R.id.imageView_photo);
             loadingAnim = (ProgressBar)findViewById(R.id.loading_anim);
             contextLayout = (LinearLayout)findViewById(R.id.context_layout);
@@ -71,6 +74,14 @@ public class PreviewActivity extends Activity {
                     }
                 }).start();
 
+                try {
+                    JSONObject json=HttpRequestUtils.stringToJSON("{'date': '"+diary.postTime+"'}");
+                    String s=HttpRequestUtils.requestPost("http://120.78.173.81/demo/hack/php/detail.php", json);
+                    tags.setText(s);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }else {
                 contextLayout.removeView(imgView);
                 contextLayout.removeView(loadingAnim);
@@ -79,6 +90,7 @@ public class PreviewActivity extends Activity {
             new AlertDialog.Builder(this).setTitle("错误").setMessage("读取日记失败！").setPositiveButton("返回",null).show();
             this.finish();
         }
+
 
         Button btnBack = (Button)findViewById(R.id.button_back);
         Button btnEdit = (Button)findViewById(R.id.button_edit);
